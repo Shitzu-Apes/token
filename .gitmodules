@@ -1,3 +1,6 @@
 [submodule "crates/aurora-sdk"]
 	path = crates/aurora-sdk
 	url = git@github.com:aurora-is-near/aurora-contracts-sdk.git
+[submodule "crates/aurora-engine"]
+	path = crates/aurora-engine
+	url = git@github.com:aurora-is-near/aurora-engine.git
