@@ -1,0 +1,32 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.dependencies]
+near-workspaces = { version = "0.9", default-features = false }
+
+[workspace.dependencies.near-contract-standards]
+version = "=5.0.0-alpha.1"
+# git = "https://github.com/near/near-sdk-rs.git"
+# rev = "ee5cf867741d6d0d4db15857609b9e9268cc9b32"
+
+[workspace.dependencies.near-sdk]
+version = "=5.0.0-alpha.1"
+# git = "https://github.com/near/near-sdk-rs.git"
+# rev = "ee5cf867741d6d0d4db15857609b9e9268cc9b32"
+default-features = false
+features = ["unit-testing", "unstable"]
+
+[profile]
+[profile.release]
+codegen-units = 1
+opt-level = 3
+lto = true
+debug = false
+panic = "abort"
+overflow-checks = true
+strip = "symbols"
+
+[profile.test.package.'*']
+codegen-units = 1
+opt-level = 1

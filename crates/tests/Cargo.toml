@@ -1,0 +1,10 @@
+[package]
+name = "chess-test"
+version = "1.0.0"
+authors = ["Mario Reder <mario.reder@pm.me>"]
+edition = "2021"
+
+[dev-dependencies]
+token = { path = "../token" }
+near-sdk.workspace = true
+near-workspaces.workspace = true
