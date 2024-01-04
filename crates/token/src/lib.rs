@@ -8,8 +8,9 @@ use near_contract_standards::fungible_token::{
 };
 use near_sdk::{
     borsh::{BorshDeserialize, BorshSerialize},
+    env,
     json_types::U128,
-    near_bindgen, AccountId, BorshStorageKey, PanicOnDefault,
+    near_bindgen, require, AccountId, BorshStorageKey, PanicOnDefault,
 };
 
 #[derive(BorshStorageKey, BorshSerialize)]
@@ -22,20 +23,28 @@ pub enum StorageKey {
 #[derive(BorshSerialize, BorshDeserialize, PanicOnDefault)]
 #[borsh(crate = "near_sdk::borsh")]
 pub struct Contract {
+    migrate_address: AccountId,
     token: FungibleToken,
 }
 
 #[near_bindgen]
 impl Contract {
     #[init]
-    pub fn new() -> Self {
+    pub fn new(migrate_address: AccountId) -> Self {
         Self {
+            migrate_address,
             token: FungibleToken::new(StorageKey::Token),
         }
     }
 
     pub fn mint(&mut self, account_id: AccountId, amount: U128) {
-        // TODO check if predecessor is Solidity smart contract
+        require!(
+            env::predecessor_account_id() == self.migrate_address,
+            "Only Shitzu address on Aurora can call this function"
+        );
+        if !self.token.accounts.contains_key(&account_id) {
+            self.token.internal_register_account(&account_id);
+        }
         self.token.internal_deposit(&account_id, amount.into());
     }
 }

@@ -1,0 +1,2 @@
+aurora-sdk/=../crates/aurora-sdk/aurora-solidity-sdk/src/
+openzeppelin-contracts/=../crates/aurora-sdk/aurora-solidity-sdk/lib/openzeppelin-contracts/contracts/
