@@ -2,7 +2,7 @@ mod core;
 mod storage;
 
 use near_contract_standards::fungible_token::{
-    events::FtBurn,
+    events::{FtBurn, FtMint},
     metadata::{FungibleTokenMetadata, FungibleTokenMetadataProvider},
     FungibleToken, FungibleTokenResolver,
 };
@@ -48,6 +48,12 @@ impl Contract {
             self.token.internal_register_account(&account_id);
         }
         self.token.internal_deposit(&account_id, amount.into());
+        FtMint {
+            owner_id: &account_id,
+            amount,
+            memo: None,
+        }
+        .emit();
     }
 
     pub fn migrate(&mut self) {
