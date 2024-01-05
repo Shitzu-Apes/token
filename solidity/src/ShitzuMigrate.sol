@@ -64,11 +64,11 @@ contract ShitzuMigrate is AccessControl {
             Strings.toString(amount),
             '"}'
         );
-        PromiseCreateArgs memory callMigrate = near.call(
+        PromiseCreateArgs memory callMint = near.call(
             shitzuNearId,
-            "migrate",
+            "mint",
             data,
-            1,
+            0,
             MIGRATE_NEAR_GAS
         );
         PromiseCreateArgs memory callback = near.auroraCall(
@@ -82,7 +82,7 @@ contract ShitzuMigrate is AccessControl {
             MIGRATE_CALLBACK_NEAR_GAS
         );
 
-        callMigrate.then(callback).transact();
+        callMint.then(callback).transact();
     }
 
     function migrateCallback(
@@ -94,10 +94,7 @@ contract ShitzuMigrate is AccessControl {
         if (promiseResult.status != PromiseResultStatus.Successful) {
             shitzuAurora.transfer(sender, amount);
         } else {
-            shitzuAurora.transfer(
-                0x0000000000000000000000000000000000000000,
-                amount
-            );
+            shitzuAurora.transfer(address(0), amount);
         }
     }
 }

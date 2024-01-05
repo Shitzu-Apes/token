@@ -1,9 +1,15 @@
 [workspace]
-members = ["crates/*"]
+members = ["crates/tests", "crates/token"]
+exclude = ["target/aurora-engine/etc/xcc-router"]
 resolver = "2"
 
 [workspace.dependencies]
+anyhow = "1"
 near-workspaces = { version = "0.9", default-features = false }
+parity-secp256k1 = { git = 'https://github.com/paritytech/rust-secp256k1.git' }
+primitive-types = "0.12"
+serde_json = "1"
+tokio = "1"
 
 [workspace.dependencies.near-contract-standards]
 version = "=5.0.0-alpha.1"
@@ -30,3 +36,6 @@ strip = "symbols"
 [profile.test.package.'*']
 codegen-units = 1
 opt-level = 1
+
+[patch.crates-io]
+parity-secp256k1 = { git = 'https://github.com/paritytech/rust-secp256k1.git' }
