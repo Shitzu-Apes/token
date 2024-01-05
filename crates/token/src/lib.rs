@@ -10,7 +10,7 @@ use near_sdk::{
     borsh::{BorshDeserialize, BorshSerialize},
     env,
     json_types::U128,
-    near_bindgen, require, AccountId, BorshStorageKey, PanicOnDefault,
+    near_bindgen, require, AccountId, BorshStorageKey, PanicOnDefault, Promise,
 };
 
 #[derive(BorshStorageKey, BorshSerialize)]
@@ -23,6 +23,7 @@ pub enum StorageKey {
 #[derive(BorshSerialize, BorshDeserialize, PanicOnDefault)]
 #[borsh(crate = "near_sdk::borsh")]
 pub struct Contract {
+    owner: AccountId,
     migrate_address: AccountId,
     token: FungibleToken,
 }
@@ -30,8 +31,9 @@ pub struct Contract {
 #[near_bindgen]
 impl Contract {
     #[init]
-    pub fn new(migrate_address: AccountId) -> Self {
+    pub fn new(owner: AccountId, migrate_address: AccountId) -> Self {
         Self {
+            owner,
             migrate_address,
             token: FungibleToken::new(StorageKey::Token),
         }
@@ -46,6 +48,24 @@ impl Contract {
             self.token.internal_register_account(&account_id);
         }
         self.token.internal_deposit(&account_id, amount.into());
+    }
+
+    pub fn migrate(&mut self) {
+        // empty for now
+    }
+
+    pub fn upgrade(&self) -> Promise {
+        require!(
+            env::predecessor_account_id() == self.owner,
+            "Only account owner can update the code"
+        );
+
+        let code = env::input().expect("Error: No input").to_vec();
+
+        Promise::new(env::current_account_id())
+            .deploy_contract(code)
+            .then(Self::ext(env::current_account_id()).migrate())
+            .as_return()
     }
 }
 

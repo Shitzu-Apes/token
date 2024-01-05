@@ -8,9 +8,12 @@ edition = "2021"
 aurora-sdk-integration-tests = { path = "../aurora-sdk/aurora-rust-sdk/aurora-sdk-integration-tests" }
 token = { path = "../token" }
 anyhow.workspace = true
+near-contract-standards.workspace = true
 near-sdk.workspace = true
 near-workspaces.workspace = true
+owo-colors.workspace = true
 parity-secp256k1.workspace = true
 primitive-types.workspace = true
+serde.workspace = true
 serde_json.workspace = true
 tokio.workspace = true

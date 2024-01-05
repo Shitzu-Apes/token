@@ -31,7 +31,7 @@ pub async fn initialize_aurora(
     mint_amount: u128,
     contract_path: Option<&str>,
 ) -> anyhow::Result<AuroraInit> {
-    let (worker, owner, contract) = initialize_contracts().await?;
+    let (worker, owner, contract) = initialize_contracts(None).await?;
     let engine = aurora_engine::deploy_latest(&worker).await.unwrap();
     let aurora_wnear = wnear::Wnear::deploy(&worker, &engine).await.unwrap();
 
@@ -100,7 +100,7 @@ pub async fn initialize_aurora(
 
     contract
         .call("new")
-        .args_json((&near_representative_id,))
+        .args_json((owner.id(), &near_representative_id))
         .max_gas()
         .transact()
         .await?
@@ -118,7 +118,9 @@ pub async fn initialize_aurora(
     })
 }
 
-async fn initialize_contracts() -> anyhow::Result<(Worker<Sandbox>, Account, Contract)> {
+pub async fn initialize_contracts(
+    path: Option<&'static str>,
+) -> anyhow::Result<(Worker<Sandbox>, Account, Contract)> {
     let worker = near_workspaces::sandbox().await?;
 
     let owner = worker.dev_create_account().await?;
@@ -128,7 +130,7 @@ async fn initialize_contracts() -> anyhow::Result<(Worker<Sandbox>, Account, Con
         .create_tla_and_deploy(
             "token.test.near".parse()?,
             key,
-            &fs::read("../../res/token.wasm").await?,
+            &fs::read(path.unwrap_or("../../res/token.wasm")).await?,
         )
         .await?
         .into_result()?;
