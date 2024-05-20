@@ -56,6 +56,16 @@ impl Contract {
         .emit();
     }
 
+    /// This function recovers tokens that have been accidentially sent to the contract address itself
+    /// and will send those tokens back to the contract owner's address.
+    pub fn recover(&mut self) {
+        let self_id = env::current_account_id();
+        let balance = self.token.internal_unwrap_balance_of(&self_id);
+        require!(balance > 0, "Balance is zero");
+        self.token.internal_withdraw(&self_id, balance);
+        self.token.internal_deposit(&self.owner, balance);
+    }
+
     pub fn migrate(&mut self) {
         // empty for now
     }
