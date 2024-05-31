@@ -95,6 +95,95 @@ async fn test_migration_success() -> anyhow::Result<()> {
     Ok(())
 }
 
+// in order to run this test set the timestamp in the contract crates/token/src/lib.rs accordingly and rebuild
+#[tokio::test]
+async fn test_migration_closed() -> anyhow::Result<()> {
+    let mint_amount = 10_000;
+    let aurora::AuroraInit {
+        worker,
+        engine,
+        aurora_wnear,
+        shitzu_erc20,
+        owner,
+        contract,
+        sol_contract,
+        ..
+    } = aurora::initialize_aurora(mint_amount, None).await?;
+    let owner_address = near_account_to_evm_address(owner.id().as_bytes());
+
+    let shitzuv1_balance = engine
+        .erc20_balance_of(&shitzu_erc20, owner_address)
+        .await?;
+    assert_eq!(shitzuv1_balance.as_u128(), mint_amount);
+
+    engine
+        .mint_wnear(
+            &aurora_wnear,
+            sol_contract.address,
+            10_000_000_000_000_000_000_000_000,
+        )
+        .await?;
+
+    engine
+        .mint_account(
+            owner_address,
+            0,
+            Wei::new_u128(50_000_000_000_000_000_000_000),
+        )
+        .await?;
+
+    aurora::approve_wnear(&engine, &owner, &sol_contract).await?;
+
+    // approve Shitzuv1 for Solidity contract
+    let result = engine
+        .call_evm_contract_with(
+            &owner,
+            shitzu_erc20.address,
+            shitzu_erc20.create_approve_call_bytes(sol_contract.address, U256::MAX),
+            Wei::zero(),
+        )
+        .await?;
+    aurora_engine::unwrap_success(result.status)?;
+
+    aurora::migrate(&engine, &owner, &sol_contract, owner.id().to_string(), 1).await?;
+    let balance: U128 = contract
+        .view("ft_balance_of")
+        .args_json((owner.id(),))
+        .await?
+        .json()?;
+    assert_eq!(balance.0, 1);
+    let shitzuv1_balance = engine
+        .erc20_balance_of(&shitzu_erc20, owner_address)
+        .await?;
+    assert_eq!(shitzuv1_balance.as_u128(), mint_amount - 1);
+
+    while worker.view_block().await?.header().timestamp_nanosec() < 1717165435788748539 {
+        worker.fast_forward(100).await?;
+    }
+
+    aurora::migrate(
+        &engine,
+        &owner,
+        &sol_contract,
+        owner.id().to_string(),
+        1_000,
+    )
+    .await?;
+    let balance: U128 = contract
+        .view("ft_balance_of")
+        .args_json((owner.id(),))
+        .await?
+        .json()?;
+    assert_eq!(balance.0, 1);
+
+    let shitzuv1_balance = engine
+        .erc20_balance_of(&shitzu_erc20, owner_address)
+        .await?;
+    assert_eq!(shitzuv1_balance.as_u128(), mint_amount - 1);
+
+    Ok(())
+}
+
 #[tokio::test]
 async fn test_migration_missing_allowance() -> anyhow::Result<()> {
     let mint_amount = 10_000;

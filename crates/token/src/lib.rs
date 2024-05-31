@@ -41,6 +41,10 @@ impl Contract {
 
     pub fn mint(&mut self, account_id: AccountId, amount: U128) {
         require!(
+            env::block_timestamp() < 1_718_409_600_000_000_000,
+            "Migration closed indefinitely"
+        );
+        require!(
             env::predecessor_account_id() == self.migrate_address,
             "Only Shitzu address on Aurora can call this function"
         );
