@@ -268,10 +268,8 @@ async fn test_mint_check_predecessor() -> anyhow::Result<()> {
 
 #[tokio::test]
 async fn test_upgrade_contract_via_dao() -> anyhow::Result<()> {
-    let (worker, owner, contract) = aurora::initialize_contracts(
-        Some("../../res/token.wasm"), // TODO set this to old contract
-    )
-    .await?;
+    let (worker, owner, contract) =
+        aurora::initialize_contracts(Some("../../res/token_old.wasm")).await?;
     let council = worker.dev_create_account().await?;
 
     let dao_contract = worker
@@ -343,32 +341,6 @@ async fn test_upgrade_contract_via_dao() -> anyhow::Result<()> {
                 receiver_id: contract.id().clone(),
                 method_name: "upgrade".to_string(),
                 hash,
-            },
-        },
-        None,
-    )
-    .await?;
-    call::act_proposal(
-        &council,
-        dao_contract.id(),
-        proposal_id,
-        Action::VoteApprove,
-    )
-    .await?;
-
-    let proposal_id = call::add_proposal(
-        &council,
-        dao_contract.id(),
-        ProposalInput {
-            description: "migrate contract".to_string(),
-            kind: ProposalKind::FunctionCall {
-                receiver_id: contract.id().clone(),
-                actions: vec![ActionCall {
-                    method_name: "migrate".to_string(),
-                    args: vec![].into(),
-                    deposit: 0.into(),
-                    gas: 100_000_000_000_000.into(),
-                }],
             },
         },
         None,

@@ -767,24 +767,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fd16c4719339c4530435d38e511904438d07cce7950afa3718a84ac36c10e89e"
 
 [[package]]
-name = "chess-test"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "aurora-sdk-integration-tests",
- "near-contract-standards",
- "near-sdk",
- "near-workspaces",
- "owo-colors",
- "parity-secp256k1",
- "primitive-types 0.12.2",
- "serde",
- "serde_json",
- "token",
- "tokio",
-]
-
-[[package]]
 name = "chrono"
 version = "0.4.31"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1141,6 +1123,12 @@ name = "dmsort"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f0bc8fbe9441c17c9f46f75dfe27fa1ddb6c68a461ccaed0481419219d4f10d3"
+
+[[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "dyn-clone"
@@ -4284,6 +4272,42 @@ version = "1.0.0"
 dependencies = [
  "near-contract-standards",
  "near-sdk",
+]
+
+[[package]]
+name = "token-migrate"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "dotenv",
+ "near-contract-standards",
+ "near-sdk",
+ "near-workspaces",
+ "owo-colors",
+ "parity-secp256k1",
+ "primitive-types 0.12.2",
+ "serde",
+ "serde_json",
+ "token",
+ "tokio",
+]
+
+[[package]]
+name = "token-test"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "aurora-sdk-integration-tests",
+ "near-contract-standards",
+ "near-sdk",
+ "near-workspaces",
+ "owo-colors",
+ "parity-secp256k1",
+ "primitive-types 0.12.2",
+ "serde",
+ "serde_json",
+ "token",
+ "tokio",
 ]
 
 [[package]]

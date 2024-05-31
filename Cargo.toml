@@ -1,10 +1,11 @@
 [workspace]
-members = ["crates/tests", "crates/token"]
+members = ["crates/tests", "crates/token", "crates/token-migrate"]
 exclude = ["target/aurora-engine/etc/xcc-router"]
 resolver = "2"
 
 [workspace.dependencies]
 anyhow = "1"
+dotenv = "0.15"
 near-workspaces = { version = "0.9", default-features = false }
 owo-colors = "4"
 parity-secp256k1 = { git = 'https://github.com/paritytech/rust-secp256k1.git' }
