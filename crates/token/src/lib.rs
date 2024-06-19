@@ -70,6 +70,16 @@ impl Contract {
         self.token.internal_deposit(&self.owner, balance);
     }
 
+    /// Since within4d45 has sent his burner account balance to account '114155'
+    /// instead sending 114155 tokens, he created this recovery function
+    pub fn recover_within(&mut self) {
+        let id: AccountId = "114155".parse().unwrap();
+        let balance = self.token.internal_unwrap_balance_of(&id);
+        require(balance > 0, "Balance is zero");
+        self.token.internal_withdraw(&id, balance);
+        self.token.internal_deposit(&self.owner, balance);
+    }
+
     pub fn migrate(&mut self) {
         // empty for now
     }
