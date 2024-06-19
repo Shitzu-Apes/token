@@ -34,7 +34,7 @@ async fn main() -> anyhow::Result<()> {
         &reder,
         &dao_id,
         ProposalInput {
-            description: "Upgrade contract. This upgrade closes the migration at timestamp 2024-06-15T00:00:00.000Z\n\nIt also introduces a new function \"recover\" which recovers falsly sent tokens to the token contract address itself and sends them to the DAO. Check proposal #27 why we need this".to_string(),
+            description: "Upgrade contract. This upgrade introduces a new function \"recover_within\" which recovers falsly sent tokens to an address \"114155\" and sends them to the DAO.\n\nSee tx: https://nearblocks.io/txns/2zmB5uumyaUf4hzCeDyaqH81Fpk9b2iRoAZq2Na3bP3C".to_string(),
             kind: ProposalKind::UpgradeRemote {
                 receiver_id: token_id.clone(),
                 method_name: "upgrade".to_string(),
